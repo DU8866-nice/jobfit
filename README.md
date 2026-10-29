@@ -115,13 +115,17 @@ python -m evals.run_evals     # the evaluation set with the current provider
 
 `evals/cases/` holds invented job ads and resumes from Australia, the UK, the US and China, each with the statuses a careful human reviewer would expect. The runner reports status accuracy, work-rights accuracy and the share of cited quotes that were really in the resume.
 
-| Provider | Status accuracy | Work rights | Quotes found in resume |
-| --- | --- | --- | --- |
-| Demo mode (keyword matching) | 72.7% (16/22) | 4/4 | 100% |
-| Claude | to be measured | | |
-| DeepSeek | to be measured | | |
+| Provider | Status accuracy | Work rights | Quotes found in resume | Time per analysis | Tokens per analysis |
+| --- | --- | --- | --- | --- | --- |
+| Demo mode (keyword matching) | 68.2% (15/22) | 4/4 | 100% | under 0.1s | none |
+| DeepSeek, `deepseek-flash` for both steps | 95.5% (21/22)* | 4/4 | 100% (32/32) | 17.2s | about 2,200 in, 2,800 out |
+| Claude | not measured yet | | | | |
 
-The demo mode is the baseline a real model has to beat.
+\* Measured on 29 October 2026. Its one miss was a labelling error in the eval set: the resume had Tableau where the ad asked for Power BI, and the matching rubric counts a similar tool as *partly met*, which is what DeepSeek answered. The label has since been corrected. Four cases is a small set, so treat these numbers as a first signal; growing the set is on the [roadmap](ROADMAP.md).
+
+At DeepSeek's published `deepseek-flash` prices (peak: ¥2 per million input tokens, ¥8 per million output tokens; half that off-peak), one analysis costs about ¥0.03 at peak.
+
+Real-model runs happen in GitHub Actions with the API key stored as a repository secret: **Actions → Evaluate with a real model → Run workflow**. Each run posts its report to the *Evaluation results* issue.
 
 ## Project layout
 
