@@ -3,6 +3,8 @@
 **Check your resume against any job ad, with proof.**
 JobFit lists what the job asks for, shows which requirements your resume meets, and quotes the line in your resume that proves each one. Suggested edits start from your own lines and never invent experience. Works with English and Chinese job ads and resumes.
 
+**Try it: [jobfit-xxut.onrender.com](https://jobfit-xxut.onrender.com)** (free hosting, so the first visit after a quiet spell takes about a minute to wake up)
+
 [中文说明](README.zh-CN.md) · [Roadmap](ROADMAP.md)
 
 ![CI](https://github.com/DU8866-nice/jobfit/actions/workflows/ci.yml/badge.svg)

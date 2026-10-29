@@ -30,7 +30,7 @@ This file is the shared memory of the project. At the start of every working ses
 ## Milestone 2: public launch / 上线
 
 - [x] Choose a host: Render free plan to start (no card, sleeps when idle); Fly.io config kept ready for when traffic justifies a few dollars a month
-- [ ] Deploy on Render and get a public URL
+- [x] Deploy on Render and get a public URL: https://jobfit-xxut.onrender.com
 - [ ] Confirm the per-visitor rate limit sees real visitor IPs on Render (`True-Client-IP`)
 - [ ] Keep the DeepSeek balance small (it is prepaid), since the in-memory daily limit resets whenever the free server sleeps
 - [ ] Short privacy page (what is sent to the AI provider, that nothing is stored)
@@ -53,5 +53,6 @@ This file is the shared memory of the project. At the start of every working ses
 
 ## Log / 进度记录
 
+- **2026-10-29**: Live on Render's free plan at https://jobfit-xxut.onrender.com (Singapore, DeepSeek). `/api/health` answers `provider: deepseek`. Next: James tests with his own resume and real job ads.
 - **2026-10-29**: First DeepSeek evaluation run. 21/22 statuses, 32/32 quotes verified, 17s and about 5k tokens per analysis. Its only miss exposed a label that contradicted the rubric (Tableau for a Power BI requirement is partial, not missing); label fixed, demo baseline is now 68.2%.
 - **2026-10-29**: Project started. Built v0.1: backend pipeline with verification, Claude/DeepSeek/demo providers, bilingual React frontend, tests, eval set, CI and Docker. Mock baseline status accuracy 72.7% (16/22).
