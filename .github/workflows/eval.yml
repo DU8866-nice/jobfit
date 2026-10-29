@@ -1,0 +1,75 @@
+# Run the evaluation set against a real AI provider, on demand.
+# API keys come from repository secrets (Settings > Secrets and variables > Actions),
+# so they never appear in the code, the logs or a chat.
+# Results are posted as a comment on the "Evaluation results" issue.
+
+name: Evaluate with a real model
+
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: "Which provider to evaluate"
+        required: true
+        default: deepseek
+        type: choice
+        options: [deepseek, anthropic, mock]
+      extract_model:
+        description: "Model for step 1 (leave empty for the provider default)"
+        required: false
+        default: ""
+      match_model:
+        description: "Model for step 2 (leave empty for the provider default)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e .
+
+      - name: Run the evaluation set
+        env:
+          JOBFIT_PROVIDER: ${{ inputs.provider }}
+          JOBFIT_EXTRACT_MODEL: ${{ inputs.extract_model }}
+          JOBFIT_MATCH_MODEL: ${{ inputs.match_model }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python -m evals.run_evals --save --markdown eval-report.md
+
+      - name: Post the report to the "Evaluation results" issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ ! -f eval-report.md ]; then echo "No report was written."; exit 0; fi
+          cat eval-report.md >> "$GITHUB_STEP_SUMMARY"
+          number=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Evaluation results in:title" --json number --jq '.[0].number // empty')
+          if [ -z "$number" ]; then
+            url=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "Evaluation results" \
+              --body "Each run of the \"Evaluate with a real model\" workflow adds a comment here with its results.")
+            number="${url##*/}"
+          fi
+          gh issue comment "$number" --repo "$GITHUB_REPOSITORY" --body-file eval-report.md
+
+      - name: Keep the full JSON report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results-${{ inputs.provider }}
+          path: backend/evals/results/
+          if-no-files-found: ignore

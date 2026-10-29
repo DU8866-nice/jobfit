@@ -15,7 +15,7 @@ from pydantic import BaseModel, ValidationError
 from ..config import Settings
 from ..prompts import build_extract_user, build_match_user, extract_system, match_system
 from ..schemas import ExtractionResult, Language, MatchResult, Requirement
-from .base import LLMError
+from .base import LLMError, UsageMeter
 from .json_schema import strict_json_schema
 
 log = logging.getLogger(__name__)
@@ -50,6 +50,7 @@ class AnthropicClient:
         self._settings = settings
         self.extract_model = settings.extract_model or self.DEFAULT_EXTRACT_MODEL
         self.match_model = settings.match_model or self.DEFAULT_MATCH_MODEL
+        self.usage = UsageMeter()
 
     def extract_requirements(self, job_description: str, language: Language) -> ExtractionResult:
         return self._structured(
@@ -97,6 +98,9 @@ class AnthropicClient:
         except Exception as exc:  # the SDK's errors all derive from anthropic.APIError
             log.exception("Claude request failed")
             raise LLMError("ai_unavailable", "The AI service could not be reached. Please try again in a minute.") from exc
+
+        usage = getattr(response, "usage", None)
+        self.usage.add(getattr(usage, "input_tokens", None), getattr(usage, "output_tokens", None))
 
         stop_reason = getattr(response, "stop_reason", None)
         if stop_reason == "refusal":

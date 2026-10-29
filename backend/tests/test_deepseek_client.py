@@ -103,3 +103,15 @@ def test_missing_api_key_is_reported():
     with pytest.raises(LLMError) as info:
         DeepSeekClient(Settings(provider="deepseek"))
     assert info.value.code == "ai_not_configured"
+
+
+def test_token_usage_is_counted_across_retries():
+    first = reply(MISSING_FIELD)
+    first.usage = SimpleNamespace(prompt_tokens=1000, completion_tokens=200)
+    second = reply(GOOD)
+    second.usage = SimpleNamespace(prompt_tokens=1300, completion_tokens=150)
+    sdk, _ = fake_sdk(first, second)
+    client = DeepSeekClient(SETTINGS, sdk_client=sdk)
+    client.extract_requirements("We need SQL.", "en")
+    totals = client.usage.snapshot()
+    assert (totals.calls, totals.input_tokens, totals.output_tokens) == (2, 2300, 350)

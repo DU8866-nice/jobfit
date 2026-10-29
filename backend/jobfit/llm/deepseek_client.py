@@ -23,7 +23,7 @@ from pydantic import BaseModel, ValidationError
 from ..config import Settings
 from ..prompts import build_extract_user, build_match_user, extract_system, match_system
 from ..schemas import ExtractionResult, Language, MatchResult, Requirement
-from .base import LLMError
+from .base import LLMError, UsageMeter
 from .json_schema import strict_json_schema
 
 log = logging.getLogger(__name__)
@@ -67,6 +67,7 @@ class DeepSeekClient:
         self._sdk = sdk_client
         self.extract_model = settings.extract_model or self.DEFAULT_EXTRACT_MODEL
         self.match_model = settings.match_model or self.DEFAULT_MATCH_MODEL
+        self.usage = UsageMeter()
 
     def extract_requirements(self, job_description: str, language: Language) -> ExtractionResult:
         return self._structured(
@@ -104,6 +105,9 @@ class DeepSeekClient:
                 raise LLMError(
                     "ai_unavailable", "The AI service could not be reached. Please try again in a minute."
                 ) from exc
+
+            usage = getattr(response, "usage", None)
+            self.usage.add(getattr(usage, "prompt_tokens", None), getattr(usage, "completion_tokens", None))
 
             choice = response.choices[0]
             if choice.finish_reason == "length":

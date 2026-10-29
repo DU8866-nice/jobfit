@@ -102,3 +102,12 @@ def test_model_names_can_be_overridden():
     settings = Settings(provider="anthropic", anthropic_api_key="test", extract_model="claude-opus-5-5")
     AnthropicClient(settings, sdk_client=sdk).extract_requirements("We need SQL.", "en")
     assert sdk.messages.calls[0]["model"] == "claude-opus-5-5"
+
+
+def test_token_usage_is_counted():
+    sdk = fake_sdk()
+    sdk.messages.response.usage = SimpleNamespace(input_tokens=900, output_tokens=400)
+    client = AnthropicClient(SETTINGS, sdk_client=sdk)
+    client.extract_requirements("We need SQL.", "en")
+    totals = client.usage.snapshot()
+    assert (totals.calls, totals.input_tokens, totals.output_tokens) == (1, 900, 400)
