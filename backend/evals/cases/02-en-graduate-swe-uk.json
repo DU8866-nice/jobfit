@@ -1,0 +1,35 @@
+{
+  "note": "UK graduate role with a security-clearance condition.",
+  "language": "en",
+  "job_description": "Graduate Software Engineer\nNorthbeam Systems — Manchester, UK\n\nRequirements\n- Programming experience in Java or TypeScript\n- Experience building web front ends with React\n- Version control with Git\n- An understanding of automated testing, such as unit tests\n\nDesirable\n- Docker\n- Kubernetes\n\nCandidates must be eligible for UK Security Clearance (SC).\n\nBenefits\n- 25 days holiday and a pension scheme",
+  "resume": "Priya Nair\nLondon | priya.nair@example.com\n\nEDUCATION\nBSc Computer Science, Example University, 2026\n\nSKILLS\nTypeScript, React, Node.js, Git, Docker\n\nEXPERIENCE\nSoftware Engineering Intern, Cobalt Labs (Jun 2025 – Sep 2025)\n- Fixed bugs in a Node.js REST API and added Jest unit tests for the billing module\n- Reviewed pull requests with the team on GitHub\n\nPROJECTS\n- Built a React and TypeScript study planner used by 40 classmates\n- Containerised the planner's API with Docker and deployed it to a cloud VM",
+  "expected": {
+    "work_rights_mentioned": true,
+    "requirements": [
+      {
+        "match": "TypeScript",
+        "status": "met"
+      },
+      {
+        "match": "React",
+        "status": "met"
+      },
+      {
+        "match": "Git",
+        "status": "met"
+      },
+      {
+        "match": "test",
+        "status": "met"
+      },
+      {
+        "match": "Docker",
+        "status": "met"
+      },
+      {
+        "match": "Kubernetes",
+        "status": "missing"
+      }
+    ]
+  }
+}

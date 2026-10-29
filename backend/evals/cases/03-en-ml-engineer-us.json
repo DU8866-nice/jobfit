@@ -1,0 +1,31 @@
+{
+  "note": "US role asking for 3+ years; the candidate has a 3-month internship. No visa sponsorship.",
+  "language": "en",
+  "job_description": "Machine Learning Engineer\nLakeside Health AI — Remote (United States)\n\nWhat you'll need\n- 3+ years of experience building machine learning systems in production\n- Strong Python skills\n- Deep learning with PyTorch\n- Experience deploying models with MLOps practices and CI/CD\n\nNice to have\n- Experience with LLMs or RAG\n\nYou must be authorized to work in the United States; we are unable to sponsor visas.",
+  "resume": "Sam Okafor\nChicago, IL | sam.okafor@example.com\n\nEDUCATION\nMaster of Data Science, Example University, 2026\n\nSKILLS\nPython, scikit-learn, pandas, SQL\n\nEXPERIENCE\nMachine Learning Intern, Brightline Analytics (Dec 2025 – Feb 2026)\n- Trained gradient boosting models in Python with scikit-learn to predict appointment no-shows\n- Wrote SQL to build the training dataset from the scheduling database\n\nPROJECTS\n- Built a retrieval-augmented generation (RAG) chatbot over university handbooks using an open-source LLM",
+  "expected": {
+    "work_rights_mentioned": true,
+    "requirements": [
+      {
+        "match": "years",
+        "status": "partial"
+      },
+      {
+        "match": "Python",
+        "status": "met"
+      },
+      {
+        "match": "PyTorch",
+        "status": "missing"
+      },
+      {
+        "match": "MLOps",
+        "status": "missing"
+      },
+      {
+        "match": "RAG",
+        "status": "met"
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "note": "Australian ad. Tableau instead of Power BI; work rights stated.",
+  "language": "en",
+  "job_description": "Junior Data Analyst\nBright Harbour Analytics — Melbourne VIC (Hybrid)\n\nAbout the role\nYou'll turn messy operational data into clear dashboards for our retail clients.\n\nWhat you'll bring\n- Strong SQL skills for querying and joining large datasets\n- Python (pandas) for data cleaning and automation\n- Experience building dashboards in Power BI\n- Clear communication with non-technical stakeholders\n- A degree in IT, statistics or a related field\n\nNice to have\n- Exposure to AWS or another cloud platform\n- dbt or Airflow\n\nApplicants must have full working rights in Australia.\n\nWhat we offer\n- Hybrid work and a learning budget\n",
+  "resume": "Alex Chen\nMelbourne VIC | alex.chen@example.com\n\nEDUCATION\nMaster of Information Technology, Example University, 2026\nBachelor of Engineering (Electronic), 2024\n\nSKILLS\nSQL, Python (pandas, NumPy), Tableau, Excel, Git\n\nEXPERIENCE\nData Intern, Southbank Retail Co (Nov 2025 – Feb 2026)\n- Wrote SQL queries to join sales and inventory tables for weekly reporting\n- Automated a data cleaning script in Python, cutting report preparation from 3 hours to 20 minutes\n- Built Tableau dashboards for the store operations team\n- Presented findings to store managers every fortnight\n\nPROJECTS\n- Customer churn analysis with pandas and scikit-learn\n",
+  "expected": {
+    "work_rights_mentioned": true,
+    "requirements": [
+      {
+        "match": "SQL",
+        "status": "met"
+      },
+      {
+        "match": "pandas",
+        "status": "met"
+      },
+      {
+        "match": "Power BI",
+        "status": "missing"
+      },
+      {
+        "match": "degree",
+        "status": "met"
+      },
+      {
+        "match": "AWS",
+        "status": "missing"
+      },
+      {
+        "match": "Airflow",
+        "status": "missing"
+      }
+    ]
+  }
+}
