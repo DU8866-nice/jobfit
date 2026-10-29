@@ -24,6 +24,7 @@ interface Props {
   loading: boolean;
   onSubmit: () => void;
   onSample: () => void;
+  privacyText: string;
 }
 
 function formatSize(bytes: number): string {
@@ -186,7 +187,7 @@ export function InputPanel(props: Props) {
           {t("trySample")}
         </button>
       </div>
-      <p className="privacy-note">{t("privacy")}</p>
+      <p className="privacy-note">{props.privacyText}</p>
     </form>
   );
 }

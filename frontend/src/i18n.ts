@@ -22,7 +22,10 @@ const en = {
   analyze: "Check my resume",
   analyzing: "Checking…",
   trySample: "Try it with a sample job ad and resume",
-  privacy: "Your resume is analysed in memory and not stored.",
+  privacy: "Your resume is sent to an AI service for analysis. JobFit doesn't store it.",
+  privacy_deepseek: "Your resume is sent to DeepSeek's AI for analysis. JobFit doesn't store it.",
+  privacy_anthropic: "Your resume is sent to Anthropic's Claude for analysis. JobFit doesn't store it.",
+  privacy_mock: "Demo mode: your resume is checked on this server only and isn't stored.",
 
   loadingTitle: "Reading the job ad and your resume",
   loadingBody: "This usually takes under a minute.",
@@ -100,7 +103,10 @@ const zh: Strings = {
   analyze: "开始分析",
   analyzing: "分析中…",
   trySample: "用示例职位和简历试一试",
-  privacy: "简历只在内存中分析，不会被保存。",
+  privacy: "简历会发送给 AI 服务进行分析，JobFit 不会保存。",
+  privacy_deepseek: "简历会发送给 DeepSeek 的 AI 进行分析，JobFit 不会保存。",
+  privacy_anthropic: "简历会发送给 Anthropic 的 Claude 进行分析，JobFit 不会保存。",
+  privacy_mock: "演示模式：简历只在本服务器上检查，不会被保存。",
 
   loadingTitle: "正在阅读职位描述和你的简历",
   loadingBody: "通常不到一分钟。",

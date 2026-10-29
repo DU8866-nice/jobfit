@@ -59,6 +59,10 @@ class Settings:
     daily_analysis_limit: int = 200
     cors_origins: tuple[str, ...] = ()
     static_dir: Path | None = None
+    # Header that carries the visitor's real IP when the app runs behind a hosting proxy
+    # (Fly.io sets Fly-Client-IP). Only set this when that proxy always overwrites the header,
+    # otherwise visitors could fake it to dodge the rate limit.
+    client_ip_header: str | None = None
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -89,4 +93,5 @@ class Settings:
             daily_analysis_limit=_int_env("JOBFIT_DAILY_ANALYSIS_LIMIT", cls.daily_analysis_limit),
             cors_origins=origins,
             static_dir=Path(static) if static else None,
+            client_ip_header=_str_env("JOBFIT_CLIENT_IP_HEADER"),
         )

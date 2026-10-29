@@ -9,6 +9,7 @@ ENV_VARS = [
     "JOBFIT_MATCH_EFFORT",
     "JOBFIT_DAILY_ANALYSIS_LIMIT",
     "JOBFIT_CORS_ORIGINS",
+    "JOBFIT_CLIENT_IP_HEADER",
 ]
 
 
@@ -48,7 +49,9 @@ def test_reads_overrides(monkeypatch):
     monkeypatch.setenv("JOBFIT_MATCH_EFFORT", "HIGH")
     monkeypatch.setenv("JOBFIT_DAILY_ANALYSIS_LIMIT", "5")
     monkeypatch.setenv("JOBFIT_CORS_ORIGINS", "http://localhost:5173, https://example.com")
+    monkeypatch.setenv("JOBFIT_CLIENT_IP_HEADER", "Fly-Client-IP")
     settings = Settings.from_env()
+    assert settings.client_ip_header == "Fly-Client-IP"
     assert settings.match_effort == "high"
     assert settings.daily_analysis_limit == 5
     assert settings.cors_origins == ("http://localhost:5173", "https://example.com")

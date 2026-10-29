@@ -24,6 +24,6 @@ RUN useradd --create-home --uid 10001 jobfit
 USER jobfit
 
 EXPOSE 8000
-# --proxy-headers lets the per-visitor rate limit see the real client IP behind a hosting
-# platform's load balancer. Only run it behind a proxy that sets X-Forwarded-For itself.
-CMD ["sh", "-c", "exec uvicorn jobfit.main:create_app --factory --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]
+# Behind a hosting proxy, set JOBFIT_CLIENT_IP_HEADER (for example Fly-Client-IP) so the
+# per-visitor rate limit sees each visitor's real IP.
+CMD ["sh", "-c", "exec uvicorn jobfit.main:create_app --factory --host 0.0.0.0 --port ${PORT:-8000}"]

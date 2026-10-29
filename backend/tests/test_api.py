@@ -111,3 +111,11 @@ def test_serves_the_frontend_when_built(tmp_path):
     client = make_client(static_dir=tmp_path)
     assert "JobFit" in client.get("/").text
     assert client.get("/api/health").status_code == 200
+
+
+def test_rate_limit_uses_the_hosting_proxy_header(job_ad, resume):
+    client = make_client(rate_limit_per_hour=1, client_ip_header="Fly-Client-IP")
+    data = {"job_description": job_ad, "resume_text": resume}
+    assert client.post("/api/analyze", data=data, headers={"Fly-Client-IP": "1.1.1.1"}).status_code == 200
+    assert client.post("/api/analyze", data=data, headers={"Fly-Client-IP": "1.1.1.1"}).status_code == 429
+    assert client.post("/api/analyze", data=data, headers={"Fly-Client-IP": "2.2.2.2"}).status_code == 200

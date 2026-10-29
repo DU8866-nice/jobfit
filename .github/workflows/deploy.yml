@@ -1,0 +1,76 @@
+# Deploy to Fly.io after CI passes on main (or when run by hand from the Actions tab).
+#
+# Needs two repository secrets (Settings > Secrets and variables > Actions):
+#   FLY_API_TOKEN     an org token from the Fly.io dashboard (Tokens page)
+#   DEEPSEEK_API_KEY  the AI provider key, copied into the Fly app's own secrets on each deploy
+# Until FLY_API_TOKEN exists, this workflow does nothing.
+
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency: deploy
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Check that deployment is set up
+        id: check
+        run: |
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "FLY_API_TOKEN is not set, so there is nothing to deploy to yet."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+        if: steps.check.outputs.ready == 'true'
+
+      - name: Create the app on first deploy
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          app=$(sed -n 's/^app = "\(.*\)"/\1/p' fly.toml)
+          if flyctl status --app "$app" > /dev/null 2>&1; then
+            echo "App $app already exists."
+          else
+            flyctl apps create "$app" --org personal
+          fi
+
+      - name: Copy the AI key into the app's secrets
+        if: steps.check.outputs.ready == 'true'
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          if [ -n "$DEEPSEEK_API_KEY" ]; then
+            flyctl secrets set "DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY" --stage
+          else
+            echo "DEEPSEEK_API_KEY is not set; the site will run in demo mode."
+          fi
+
+      - name: Deploy
+        if: steps.check.outputs.ready == 'true'
+        run: flyctl deploy --remote-only --ha=false
+
+      - name: Check the live site
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          app=$(sed -n 's/^app = "\(.*\)"/\1/p' fly.toml)
+          for i in $(seq 1 20); do
+            if curl -fs "https://$app.fly.dev/api/health"; then echo; exit 0; fi
+            sleep 5
+          done
+          echo "The site did not answer /api/health" && exit 1

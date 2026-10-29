@@ -38,6 +38,14 @@ def _from_app_error(status: int, exc: AppError) -> HTTPException:
     return _http_error(status, exc.code, exc.message)
 
 
+def _visitor_ip(request: Request, header: str | None) -> str:
+    if header:
+        value = request.headers.get(header, "").strip()
+        if value:
+            return value
+    return request.client.host if request.client else "unknown"
+
+
 def create_app(settings: Settings | None = None, client: LLMClient | None = None) -> FastAPI:
     settings = settings or Settings.from_env()
     client = client or get_client(settings)
@@ -70,7 +78,7 @@ def create_app(settings: Settings | None = None, client: LLMClient | None = None
         if language not in LANGUAGES:
             raise _http_error(400, "bad_language", f"language must be one of {sorted(LANGUAGES)}.")
 
-        visitor = request.client.host if request.client else "unknown"
+        visitor = _visitor_ip(request, settings.client_ip_header)
         if not per_visitor.allow(visitor):
             raise _http_error(429, "rate_limited", "Too many analyses from this address. Please try again in an hour.")
         if not site_wide.allow("site"):

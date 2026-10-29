@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ApiError, analyze } from "./api";
+import { ApiError, analyze, fetchProvider } from "./api";
 import { InputPanel } from "./components/InputPanel";
 import type { ResumeMode } from "./components/InputPanel";
 import { Results } from "./components/Results";
@@ -28,6 +28,7 @@ export function App() {
   const [elapsed, setElapsed] = useState(0);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<{ code: string; message: string } | null>(null);
+  const [provider, setProvider] = useState<string | null>(null);
 
   const abortRef = useRef<AbortController | null>(null);
   const resultsHeading = useRef<HTMLHeadingElement>(null);
@@ -39,6 +40,10 @@ export function App() {
     document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
     saveLanguage(lang);
   }, [lang]);
+
+  useEffect(() => {
+    fetchProvider().then(setProvider);
+  }, []);
 
   useEffect(() => {
     if (!loading) return;
@@ -53,6 +58,11 @@ export function App() {
     resultsHeading.current.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
     resultsHeading.current.focus({ preventScroll: true });
   }, [result]);
+
+  const privacyKey: StringKey =
+    provider === "deepseek" || provider === "anthropic" || provider === "mock"
+      ? (`privacy_${provider}` as StringKey)
+      : "privacy";
 
   function changeLanguage(next: Language) {
     setLang(next);
@@ -152,6 +162,7 @@ export function App() {
           loading={loading}
           onSubmit={submit}
           onSample={loadSample}
+          privacyText={t(privacyKey)}
         />
 
         <div aria-live="polite" className="status-area">

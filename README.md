@@ -51,7 +51,7 @@ flowchart LR
 
 - **Two steps, two models.** Listing requirements is easy, so it uses a fast model; matching needs careful reading, so it uses a stronger one. This keeps each analysis cheap and quick.
 - **Any provider.** Claude (with [structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs), so the reply always fits the schema) or DeepSeek (JSON mode, validated with Pydantic and retried once with the validation error). An offline keyword-matching mode needs no API key and powers the tests, CI and the free demo.
-- **Nothing is stored.** Files are read in memory and discarded after the response. There are no accounts and no database.
+- **Nothing is stored.** Files are read in memory and discarded after the response. There are no accounts and no database. The page tells visitors which AI provider their resume is sent to.
 - **Cost guards.** A per-visitor hourly limit and a site-wide daily limit stop a public deployment from running up a bill.
 
 | Part | Stack |
@@ -91,6 +91,16 @@ docker build -t jobfit .
 docker run -p 8000:8000 --env-file .env jobfit     # open http://localhost:8000
 ```
 
+### Deploy to Fly.io
+
+`fly.toml` and `.github/workflows/deploy.yml` deploy the image to [Fly.io](https://fly.io) in Sydney after every green CI run on `main`. The machine stops when the site is idle and starts again on the next visit.
+
+1. Create a Fly.io account, then create an **org token** on the dashboard's Tokens page.
+2. In the GitHub repository, add the secrets `FLY_API_TOKEN` (that token) and `DEEPSEEK_API_KEY`.
+3. Change `app` in `fly.toml` if you want a different address, then push or run the **Deploy** workflow by hand.
+
+The workflow creates the app on its first run, copies the AI key into the app's secrets, deploys, and checks that `/api/health` answers.
+
 ## Configuration
 
 All settings are environment variables; see [`.env.example`](.env.example).
@@ -104,6 +114,7 @@ All settings are environment variables; see [`.env.example`](.env.example).
 | `JOBFIT_RATE_LIMIT_PER_HOUR` | `10` | Analyses per visitor per hour. `0` turns it off. |
 | `JOBFIT_DAILY_ANALYSIS_LIMIT` | `200` | Analyses for the whole site per day. `0` turns it off. |
 | `JOBFIT_MAX_UPLOAD_BYTES` | `2000000` | Largest resume file accepted. |
+| `JOBFIT_CLIENT_IP_HEADER` | none | Header holding the visitor's IP behind a hosting proxy, e.g. `Fly-Client-IP`. Only set it if the proxy always overwrites that header. |
 
 ## Tests and evaluation
 

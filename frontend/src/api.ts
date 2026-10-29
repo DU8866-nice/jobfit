@@ -57,3 +57,15 @@ export async function analyze(input: AnalyzeInput, signal?: AbortSignal): Promis
   }
   return body as AnalysisResult;
 }
+
+/** Which AI provider the server uses ("deepseek", "anthropic" or "mock"), or null if unknown. */
+export async function fetchProvider(): Promise<string | null> {
+  try {
+    const response = await fetch("/api/health");
+    if (!response.ok) return null;
+    const body = (await response.json()) as { provider?: unknown };
+    return typeof body.provider === "string" ? body.provider : null;
+  } catch {
+    return null;
+  }
+}
