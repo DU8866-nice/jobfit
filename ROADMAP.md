@@ -29,8 +29,10 @@ This file is the shared memory of the project. At the start of every working ses
 
 ## Milestone 2: public launch / 上线
 
-- [ ] Choose a host (check current pricing and free tiers), deploy the Docker image, get a public URL
-- [ ] Set a monthly spend limit in the AI provider's console
+- [x] Choose a host: Render free plan to start (no card, sleeps when idle); Fly.io config kept ready for when traffic justifies a few dollars a month
+- [ ] Deploy on Render and get a public URL
+- [ ] Confirm the per-visitor rate limit sees real visitor IPs on Render (`True-Client-IP`)
+- [ ] Keep the DeepSeek balance small (it is prepaid), since the in-memory daily limit resets whenever the free server sleeps
 - [ ] Short privacy page (what is sent to the AI provider, that nothing is stored)
 - [ ] Privacy-friendly usage counts (number of analyses, error rate; no content)
 - [ ] 5–10 real users (classmates); collect feedback in GitHub Issues

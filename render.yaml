@@ -1,0 +1,30 @@
+# Render Blueprint: the whole app as one free web service built from the Dockerfile.
+# In the Render dashboard: New > Blueprint > pick this repository. Render asks for
+# DEEPSEEK_API_KEY once, then redeploys automatically after each green CI run on main.
+#
+# Free plan: 512 MB RAM, sleeps after 15 minutes without visitors and takes about a
+# minute to wake up on the next visit.
+
+services:
+  - type: web
+    name: jobfit
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: JOBFIT_PROVIDER
+        value: deepseek
+      - key: JOBFIT_RATE_LIMIT_PER_HOUR
+        value: "10"
+      - key: JOBFIT_DAILY_ANALYSIS_LIMIT
+        value: "200"
+      # Render sits behind Cloudflare, which sets True-Client-IP to the visitor's address.
+      # X-Forwarded-For is not used because visitors can add fake entries to it.
+      - key: JOBFIT_CLIENT_IP_HEADER
+        value: True-Client-IP
+      - key: DEEPSEEK_API_KEY
+        sync: false

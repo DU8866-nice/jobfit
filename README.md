@@ -91,15 +91,19 @@ docker build -t jobfit .
 docker run -p 8000:8000 --env-file .env jobfit     # open http://localhost:8000
 ```
 
-### Deploy to Fly.io
+### Deploy for free on Render
 
-`fly.toml` and `.github/workflows/deploy.yml` deploy the image to [Fly.io](https://fly.io) in Sydney after every green CI run on `main`. The machine stops when the site is idle and starts again on the next visit.
+`render.yaml` describes the site as one free [Render](https://render.com) web service in Singapore, built from the Dockerfile.
 
-1. Create a Fly.io account, then create an **org token** on the dashboard's Tokens page.
-2. In the GitHub repository, add the secrets `FLY_API_TOKEN` (that token) and `DEEPSEEK_API_KEY`.
-3. Change `app` in `fly.toml` if you want a different address, then push or run the **Deploy** workflow by hand.
+1. Sign in to Render with GitHub, choose **New > Blueprint**, and pick this repository.
+2. Render asks for `DEEPSEEK_API_KEY`. Paste the key there; it is stored by Render, not in the repository.
+3. Click **Apply**. The first build takes a few minutes, then the site is live at `https://<service-name>.onrender.com`.
 
-The workflow creates the app on its first run, copies the AI key into the app's secrets, deploys, and checks that `/api/health` answers.
+After that, Render redeploys on its own whenever CI passes on `main`. On the free plan the site sleeps after 15 minutes without visitors, and the next visit takes about a minute to wake it.
+
+### Deploy to Fly.io (paid, no sleeping)
+
+`fly.toml` and `.github/workflows/deploy.yml` deploy the same image to [Fly.io](https://fly.io) in Sydney after every green CI run on `main`. The machine stops when idle and wakes within seconds. Add the repository secrets `FLY_API_TOKEN` (an org token from the Fly.io dashboard) and `DEEPSEEK_API_KEY`; until `FLY_API_TOKEN` exists the workflow does nothing.
 
 ## Configuration
 
@@ -114,7 +118,7 @@ All settings are environment variables; see [`.env.example`](.env.example).
 | `JOBFIT_RATE_LIMIT_PER_HOUR` | `10` | Analyses per visitor per hour. `0` turns it off. |
 | `JOBFIT_DAILY_ANALYSIS_LIMIT` | `200` | Analyses for the whole site per day. `0` turns it off. |
 | `JOBFIT_MAX_UPLOAD_BYTES` | `2000000` | Largest resume file accepted. |
-| `JOBFIT_CLIENT_IP_HEADER` | none | Header holding the visitor's IP behind a hosting proxy, e.g. `Fly-Client-IP`. Only set it if the proxy always overwrites that header. |
+| `JOBFIT_CLIENT_IP_HEADER` | none | Header holding the visitor's IP behind a hosting proxy: `True-Client-IP` on Render, `Fly-Client-IP` on Fly.io. Only set it if the proxy always overwrites that header. |
 
 ## Tests and evaluation
 

@@ -81,6 +81,16 @@ docker build -t jobfit .
 docker run -p 8000:8000 --env-file .env jobfit     # 打开 http://localhost:8000
 ```
 
+### 免费部署到 Render
+
+`render.yaml` 把整个网站描述成 Render 上的一个免费服务（新加坡机房）。
+
+1. 用 GitHub 登录 [Render](https://render.com)，选择 **New → Blueprint**，选中这个仓库。
+2. Render 会要求填写 `DEEPSEEK_API_KEY`，把 Key 粘贴进去。它保存在 Render，不会进入仓库。
+3. 点 **Apply**。第一次构建需要几分钟，完成后网站地址是 `https://<服务名>.onrender.com`。
+
+之后每次 `main` 分支的 CI 通过，Render 都会自动重新部署。免费版在 15 分钟无人访问后会休眠，下一次访问需要约一分钟唤醒。
+
 全部配置项见 [`.env.example`](.env.example) 和英文 README 中的配置表。
 
 ## 测试与评测
