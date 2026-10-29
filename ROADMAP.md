@@ -21,7 +21,7 @@ This file is the shared memory of the project. At the start of every working ses
 - [x] English and Chinese interface; results explained in either language; Chinese-aware quote matching
 - [x] Cost guards: per-visitor hourly limit, site-wide daily limit
 - [x] Tests (pytest), evaluation set (4 cases), GitHub Actions, Docker image
-- [ ] First green CI run on GitHub
+- [x] First green CI run on GitHub (tests, eval set, frontend build, Docker smoke test)
 - [ ] Run the evaluation set with Claude and DeepSeek; fill in the README table; pick the default provider
 - [ ] Replace the demo-mode screenshots with real results
 
